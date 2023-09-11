@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+</head>
+
+<body>
+
+  <script>
+    const resultDate = [
+      { 'result_time': 2017 },
+      { 'result_time': 2018 },
+      { 'result_time': 2019 },
+      { 'result_time': 2020 },
+      { 'result_time': 2021 },
+      { 'result_time': 2022 },
+      { 'result_time': 2023 },
+    ];
+    const visitDate = [
+      { 'visit_date': '' },
+      { 'visit_date': 2020 },
+      { 'visit_date': '' },
+      { 'visit_date': 2022 },
+    ];
+
+    const newResult = resultDate.map(result => {
+      const visit = visitDate.find(visit => visit.visit_date === result.result_time);
+      if (visit) {
+        return {
+          'result_time': result.result_time,
+          'visit_date': 1
+        };
+      } else {
+        return {
+          'result_time': result.result_time,
+          'visit_date': 0
+        };
+      }
+    });
+    console.log('newResult => ', newResult);
+  </script>
+</body>
+
+</html>
