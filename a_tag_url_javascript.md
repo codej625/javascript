@@ -13,6 +13,14 @@
   </li>
 </ul>
 ```
+```javascript
+function click() {
+  ...logic
+}
+```
+
+<br/>
+
 ```
 * 설명
 javascript:void(0);"는 자바스크립트 이벤트 핸들러에서 주로 사용되는 특별한 JavaScript 표현식이다.
