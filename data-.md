@@ -23,8 +23,8 @@ function gnbColor() {
 
   gnbNameList.forEach(list => {
     list.addEventListener('click', () => {
-      const name = list.getAttribute('data-nav');
-
+      const name = list.getAttribute('data-nav'); /* 이값을 가지고 여러가지 조건을 만들 수 있다. */
+      
       gnbNameList.forEach(remove => {
         remove.classList.remove('add-color');
       });
