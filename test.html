@@ -4,43 +4,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test</title>
+  <title>Document</title>
+  <style>
+    .add-color {
+      color: aqua;
+    }
+  </style>
 </head>
 
 <body>
-
+  <div class="gnb-list">
+    <ul>
+      <li><a class="gnb-button" data-nav="cancer">암보험</a></li>
+      <li><a class="gnb-button" data-nav="health">종합건강보험</a></li>
+      <li><a class="gnb-button" data-nav="simple">간편보험</a></li>
+    </ul>
+  </div>
   <script>
-    const resultDate = [
-      { 'result_time': 2017 },
-      { 'result_time': 2018 },
-      { 'result_time': 2019 },
-      { 'result_time': 2020 },
-      { 'result_time': 2021 },
-      { 'result_time': 2022 },
-      { 'result_time': 2023 },
-    ];
-    const visitDate = [
-      { 'visit_date': '' },
-      { 'visit_date': 2020 },
-      { 'visit_date': '' },
-      { 'visit_date': 2022 },
-    ];
+    /* IIFE */
+    (() => {
+      gnbColor();
+    })();
+    /* Function */
+    function gnbColor() {
+      const gnbNameList = document.querySelectorAll('.gnb-button');
 
-    const newResult = resultDate.map(result => {
-      const visit = visitDate.find(visit => visit.visit_date === result.result_time);
-      if (visit) {
-        return {
-          'result_time': result.result_time,
-          'visit_date': 1
-        };
-      } else {
-        return {
-          'result_time': result.result_time,
-          'visit_date': 0
-        };
-      }
-    });
-    console.log('newResult => ', newResult);
+      gnbNameList.forEach(list => {
+        list.addEventListener('click', () => {
+          const name = list.getAttribute('data-nav');
+
+          gnbNameList.forEach(remove => {
+            remove.classList.remove('add-color');
+          });
+
+          return list.classList.add('add-color');
+        });
+      });
+    }
   </script>
 </body>
 
