@@ -48,13 +48,13 @@ function pcValidation() {
 ```
 ```javascript
 function validateName(name) {
-  const regName = /^[가-힣]+$/; // 한글만
-  const result = regName.test(name) ? true : false;
+  const regName = /^[가-힣]+$/;
+  const chkName = regName.test(name) ? true : false;
   
-  if(result ? true : false) {
-    return nameLength = (name.length > 1) ? true : false;
+  if(chkName) {
+    return (name.length > 1) ? true : false;
   }
-  return result;
+  return chkName;
 }
 
 function validateBirthday(birthday) {
