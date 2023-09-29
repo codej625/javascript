@@ -58,14 +58,14 @@ function validateName(name) {
 }
 
 function validateBirthday(birthday) {
-  const regBirthday = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+  const regBirthday =  /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
   const chkBirthday = regBirthday.test(birthday) ? true : false;
   
   return chkBirthday;
 }
 
 function validatePhone(phone) {
-  const regPhone = /(010)([1-9]{1})([0-9]{3})([0-9]{4})$/; // (010)(0을 제외한 1~9까지 1개)(0~9까지 3개)(0~9까지 4개) 총 11자리
+  const regPhone = /(010)([2-9]{1})([0-9]{3})([0-9]{4})$/; // (010)(0을 제외한 1~9까지 1개)(0~9까지 3개)(0~9까지 4개) 총 11자리
   const chkPhone = regPhone.test(phone) ? true : false;
   
   return chkPhone;
