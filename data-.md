@@ -1,7 +1,6 @@
 # data-속성을 사용해보자.
 
-## data-속성은 어떤값도 정할수가 있다.
-대신 data-로 시작해야 한다.
+## data-속성은 어떤값도 정할수가 있다. 대신 data-로 시작해야 한다.
 
 ```css
 .add-color { color: aqua; }
