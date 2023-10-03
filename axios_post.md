@@ -1,7 +1,12 @@
 # axios를 사용해보자!
 
 ```javascript
-const url = '';
+const url = /;
+const dbData = {
+  id: 'admin',
+  pw: '1234',
+  auth
+}
 
 async function axiosRecord() {
   try {
