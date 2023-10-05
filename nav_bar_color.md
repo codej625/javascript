@@ -1,4 +1,4 @@
-# url path에 따른 nav bar에 색을 바꿔보자!
+# data-속성을 사용하여 url path에 따른 nav bar에 색을 바꿔보자!
 
 ```css
 .add-color { color: aqua; }
