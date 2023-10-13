@@ -68,6 +68,14 @@
 ```
 
 ```javascript
+// 폼 요소의 값을 직렬화하기 위한 함수
+function serializeForm(formId) {
+  const form = document.getElementById(formId);
+  const formData = new FormData(form);
+  const serializedData = new URLSearchParams(formData).toString();
+
+  return serializedData;
+}
 
 const consultButton = document.getElementById('consult');
 consultButton.addEventListener('click', (e) => {
@@ -75,11 +83,18 @@ consultButton.addEventListener('click', (e) => {
   
   let checked = document.getElementById('agree_y');
   checked = checked.checked;
-  const inputValue = ['companyName', 'userName', 'contact', 'email', 'project', 'budget', 'term'];
+
+  if (checked == false) {
+    alert('개인정보 수집 및 이용에 동의 부탁드립니다.');
+    return false;
+  }
+
+  const inputFields = ['companyName', 'userName', 'contact', 'email', 'project', 'budget', 'term'];
   
-  for (var vali of inputValue) {
-    var inputValue = $(`input[name="${vali}"]`).val();
-    switch (vali) {
+  for (let vali of inputFields) {
+    const inputValue = document.querySelector(`#${vali}`).value;
+
+    switch (inputValue) {
       case 'companyName':
         if (inputValue === '') {
           alert('회사명을 입력해주세요');
@@ -125,32 +140,25 @@ consultButton.addEventListener('click', (e) => {
     }
   }
   
-  // 폼 요소의 값을 직렬화하기 위한 함수
-  function serializeForm(formId) {
-    const form = document.getElementById(formId);
-    const formData = new FormData(form);
-    const serializedData = new URLSearchParams(formData).toString();
-    return serializedData;
-  }
   // 폼 요소의 ID를 전달하여 직렬화 수행
   const result = serializeForm('frm');
   
   axios.get('{url}', {
     params: result
   })
-    .then((response) => {
-      const res = response.data;
-      if (res === 1) {
-        alert('컨설팅 요청이 완료되었습니다.');
-        window.location.reload();
-      } else {
-        alert('잘못된 요청입니다.');
-        window.location.reload();
-      }
-    })
-    .catch((error) => {
-      console.error('에러 발생: ', error);
-    });
+  .then((response) => {
+    const res = response.data;
+    if (res === 1) {
+      alert('컨설팅 요청이 완료되었습니다.');
+      window.location.reload();
+    } else {
+      alert('잘못된 요청입니다.');
+      window.location.reload();
+    }
+  })
+  .catch((error) => {
+    console.error('에러 발생: ', error);
+  });
 });
 ```
 
@@ -158,7 +166,7 @@ consultButton.addEventListener('click', (e) => {
 @CrossOrigin
 @ResponseBody
 @GetMapping(value = "/")
-public int getMail(@RequestParam HashMap<String, Object> result) throws Exception {
+public int getMail(@RequestParam HashMap<String, Object> params) throws Exception {
   log.info(">>> controller start >>>");
   
   final String DATE_TIME_HUMAN_READABLE_PATTERN = "yyyy년 M월 d일 H시 m분";   // date format set
