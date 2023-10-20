@@ -34,7 +34,7 @@ async function axiosRecord() {
 ```javascript
 ex) 함수 실행이 아닌 로직 중에 axios를 사용할 때는 익명 함수를 활용하자.
 
-async () => {
+const send = async () => {
   try {
     const response = await axios.post(`${url}`, dbData, {
       timeout: 5000, // override the default timeout for this request
@@ -51,4 +51,5 @@ async () => {
     return window.location.reload();
   }
 }
+send();
 ```
