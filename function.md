@@ -39,6 +39,9 @@ const nameFunc(data, data2) {
 ex) 파라미터의 기본값이 있는 함수
 
 const nameFunc(data, data2 = 'default') {
-  //...logic
+  console.log(data);
+  console.log(data2);
 };
+
+nameFunc('test', 'test2'); /* 두번째 파라미터(인자)자리에 인수값을 할당하면 기본값이 아닌 오버라이드 된 값이 출력 된다. */
 ```
