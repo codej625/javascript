@@ -16,12 +16,16 @@ userName => { ... } 라고 쓸 수 있다.
 *참고
 
 함수에 매개변수가 없는 경우에는, 괄호를 생략해서는 안 된다.
+```
+```javascript
 () => { ... } 라고 써야 옳다.
-
+```
 함수가 둘 이상의 매개변수를 받는 경우에도 괄호를 생략해서는 안 된다.
 
+```javascript
 userName, userAge => { ... } X
-
+```
+```javascript
 (userName, userAge) => { ... } O
 ```
 
@@ -32,12 +36,12 @@ userName, userAge => { ... } X
 화살표 함수에 반환문 외에 다른 로직이 없는 경우, return키워드와 중괄호를 생략할 수 있다.
 ```
 ```javascript
-
 number => {   return number * 3;} 라고 쓰는 게 아니라
 
 number => number * 3; 라고 쓸 수 있다.
-
+```
 만약,
+```javascript
 number => return number * 3; // 이 경우 retrun 키워드는 생략되어야 하므로, 오류가 생긴다.
 
 number => if (number === 2) { return 5 }; // 이 경우 if 문은 반환될 수 없으므로 오류가 생긴다. 
