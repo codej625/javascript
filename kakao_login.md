@@ -6,32 +6,26 @@
 ```html
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>kakao</title>
-    <script
-      src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js"
-      integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      Kakao.init({key}); /* javascript key */ 
-      Kakao.isInitialized(); /* kakao init */
-    </script>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>kakao</title>
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" crossorigin="anonymous"></script>
+  <script src="/script/common/kakao-init.js"></script>
+</head>
+
+<body>
+  <div style="border: 1px solid; width: 300px; margin: 0 auto; border-radius: 10px; background: #ededed; text-align: center;">
+    <div style="margin: 20px 20px;">
+      <input style="height: 50px; font-size: 20px;" id="birthday" oninput="maxLengthCheck(this);" pattern="\d*" maxlength="8" type="number" placeholder="생년월일 (19990101)">
+    </div>
     <a id="kakao-login-btn" href="javascript:loginWithKakao()">
       <img src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg" width="222" alt="카카오 로그인 버튼" />
     </a>
-    
-    <script>
-      function loginWithKakao() {
-        Kakao.Auth.authorize({
-          redirectUri: {redirect}, /* redirect uri */
-        });
-      }
-    </script>
-  </body>
+  </div>
+  <script src="/script/common/common.js"></script>
+</body>
+
 </html>
 ```
 
@@ -41,39 +35,17 @@
 ```html
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-  </head>
-  <body>
-    <div id="text"></div><!-- test value -->
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code');
-  
-      function sendData() {
-        const data = {
-          code,
-          redirectUri: {redirect}
-        };
-  
-        fetch({URI}, {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        })
-          .then(response => response.text())
-          .then(text => {
-            const view = document.getElementById('text');
-            view.innerHTML = text;
-          })
-          .catch(error => console.error('Error:', error));
-      }
-      sendData();
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+
+<body>
+  <div id="text"></div>
+  <script src="/script/common/kakao-login.js"></script>
+</body>
+
 </html>
 ```
 
@@ -84,6 +56,7 @@
 package kr.co.mplanit.freemilkt.restcontroller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,31 +75,42 @@ public class RestApiController {
 
   @Autowired
   KakaoLogin kakaoLogin;
-  
+
   @SuppressWarnings("unchecked")
   @PostMapping("/rest/kakao-login")
-  public String kakaoLogin(@RequestBody Map<String, Object> params) {
+  public Map<String, Object> kakaoLogin(@RequestBody Map<String, Object> params) {
     log.info(">>> RestApiController kakaoLogin start >>>");
-  
-    ObjectMapper mapper = new ObjectMapper();
-    String accessToken = "";
+
+    String accessToken = ""; /* Assign token to variable */
     String secureResource = "";
+    String shippingAddress = "";
     String redirect = (String) params.get("redirectUri");
     String code = (String) params.get("code");
+    
     Map<String, Object> map = null;
-  
+    ObjectMapper mapper = new ObjectMapper();
+
     try {
       map = mapper.readValue(kakaoLogin.getKakaoToken(redirect, code), Map.class); /* Get Token */
       accessToken = (String) map.get("access_token");
       secureResource = kakaoLogin.getSecureResource(accessToken); /* Get personal information */
-      log.info("map => {}", secureResource);
+      shippingAddress = kakaoLogin.getShippingAddress(accessToken);
+      
+      map = new HashMap<String, Object>();
+      map.put("secureResource", secureResource);
+      map.put("shippingAddress", shippingAddress);
+      /* API -> DB */
+        
+      /* Logic */
+//			map.clear();
+//			map.put("secureResource", secureResource);
     } catch (IOException e) {
       e.printStackTrace();
       log.info(" >>> account access error >>>");
     }
-  
-    return secureResource;
+    return map;
   }
+  
 }
 ```
 
@@ -197,7 +181,115 @@ public class KakaoLogin {
   
     return response.getBody();
   }
+
+  public String getShippingAddress(String accessToken) {
+    log.info(">>> RestApiController getShippingAddress start >>>");
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + accessToken);
+
+    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+    String url = "https://kapi.kakao.com/v1/user/shipping_address";
+    ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+
+    return response.getBody();
+  }
 }
+```
+
+<br/>
+
+5. add javascript
+```javascript
+function loginWithKakao() {
+  const birthday = document.getElementById('birthday').value;
+  
+  if (isNaN(birthday)) {
+    alert('숫자만 입력해주세요.');
+    return false;
+  }
+  if (birthday.length !== 8) {
+    alert('정확한 생년월일을 입력해주세요');
+    return false;
+  }
+  if (birthday === '') {
+    alert('정확한 생년월일을 입력해주세요');
+    return false;
+  }
+  return location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${client_key}&redirect_uri=https://ad-milkt.com/main/common/login&state=${birthday}`;
+}
+/* input max length */
+function maxLengthCheck(object){
+  if (object.value.length > object.maxLength){
+    object.value = object.value.slice(0, object.maxLength);
+  }
+}
+```
+
+```javascript
+/* Global variable */
+let code = '';
+const params = new URLSearchParams(window.location.search);
+/* Function */
+function sendData() {
+  const data = {
+    code,
+    redirectUri: 'https://ad-milkt.com/main/common/login'
+  };
+
+  fetch('/rest/kakao-login', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if (response.status === 500)
+      return location.href = 'https://ad-milkt.com'; /* 수정 */
+    
+    return response.json();
+  })
+  .then(response => {
+    let secureResource = '';
+    let shippingAddress = '';
+    
+    if (response.secureResource !== '')
+      secureResource = JSON.parse(response.secureResource);
+    if (response.shippingAddress !== '')
+      shippingAddress = JSON.parse(response.shippingAddress);
+    
+    const name = secureResource['kakao_account']['name'];
+    const gender = secureResource['kakao_account']['gender'];
+    console.log('address => ', shippingAddress);
+//		const detailAddress = shippingAddress['shipping_addresses']['detail_address'];
+//		const text = `name: ${name} gender: ${gender} address name: ${addressName} detail address: ${detailAddress}`;
+    
+    const view = document.getElementById('text');
+    return view.innerHTML = text;
+  })
+  .catch(err => {
+    alert('잘못된 접근입니다.');
+    return location.href = 'https://ad-milkt.com'; /* 수정 */
+  });
+}
+/* Exception */
+try {
+  code = params.get('code');
+  if (code.length > 1)
+    sendData();
+  else
+    throw new Error();
+    
+} catch (err) {
+  alert('잘못된 접근입니다.');
+  location.href = 'https://ad-milkt.com'; /* 수정 */
+}
+```
+
+```javascript
+Kakao.init(${javascript_key}); /* javascript key */
+Kakao.isInitialized(); /* kakao init */
 ```
 
 <br/>
