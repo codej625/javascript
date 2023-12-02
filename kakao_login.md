@@ -75,12 +75,12 @@ public class RestApiController {
 
   @Autowired
   KakaoLogin kakaoLogin;
-
+  
   @SuppressWarnings("unchecked")
   @PostMapping("/rest/kakao-login")
-  public Map<String, Object> kakaoLogin(@RequestBody Map<String, Object> params) {
+  public Map<String, Object> kakaoLogin(@RequestBody Map<String, Object> params) throws Exception {
     log.info(">>> RestApiController kakaoLogin start >>>");
-
+  
     String accessToken = ""; /* Assign token to variable */
     String secureResource = "";
     String shippingAddress = "";
@@ -89,7 +89,7 @@ public class RestApiController {
     
     Map<String, Object> map = null;
     ObjectMapper mapper = new ObjectMapper();
-
+  
     try {
       map = mapper.readValue(kakaoLogin.getKakaoToken(redirect, code), Map.class); /* Get Token */
       accessToken = (String) map.get("access_token");
@@ -99,18 +99,17 @@ public class RestApiController {
       map = new HashMap<String, Object>();
       map.put("secureResource", secureResource);
       map.put("shippingAddress", shippingAddress);
-      /* API -> DB */
-        
-      /* Logic */
-//			map.clear();
-//			map.put("secureResource", secureResource);
+      kakaoLogin.insertData(map); /* DB insert */
+      
+      // map.clear();
+      // map.put("secureResource", secureResource); // Send to front
     } catch (IOException e) {
       e.printStackTrace();
-      log.info(" >>> account access error >>>");
+      log.info(" >>> Kakao server access error >>>");
     }
     return map;
   }
-  
+	
 }
 ```
 
@@ -194,6 +193,45 @@ public class KakaoLogin {
 
     return response.getBody();
   }
+
+  /* Insert data */
+  @SuppressWarnings("unchecked")
+  public Map<String, Object> insertData(Map<String, Object> customerInfo) throws Exception {
+    log.info(">>> RestApiController insertData start >>>");
+    
+    String secureResource = (String) customerInfo.get("secureResource");
+    // customerInfo.get("shippingAddress");
+    ObjectMapper jsonObject = new ObjectMapper();
+    
+    /* Process the secure resource */
+    Map<String, Object> resultMap = jsonObject.readValue(secureResource, Map.class);
+    
+    for (Map.Entry<String, Object> userData : resultMap.entrySet()) {
+      if (userData.getKey().equals("kakao_account")) { /* Search for kakao_account key */
+        Map<String, Object> result = (Map<String, Object>) userData.getValue();
+        /* default value */
+        Boolean hasPhoneChk = false;
+        String phoneNumber = "";
+        
+        for (Map.Entry<String, Object> user : result.entrySet()) {
+          if (user.getKey().equals("has_phone_number")) hasPhoneChk = true;
+          
+          if (hasPhoneChk) {
+            Boolean check = user.getKey().equals("phone_number");
+            if (check) {
+              // 일반 번호 관련 로직 추가해야함!
+              
+              phoneNumber = (String) user.getValue();
+              phoneNumber = ("0" + phoneNumber.substring(4, phoneNumber.length()));
+            }
+          }	
+        }
+        System.out.println("phoneNumber value => " + phoneNumber);
+      }
+    }
+    return null;
+  }
+
 }
 ```
 
