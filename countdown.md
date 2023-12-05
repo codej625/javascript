@@ -3,9 +3,15 @@
 <br/>
 
 ```javascript
+/* countdown */
 function startCountdown(startDate, startTime, endTime) {
-  const startDateTime = new Date(`${startDate} ${startTime}`);
-  const endDateTime = new Date(`${startDate} ${endTime}`);
+  // 날짜 형식을 변환하는 함수
+  function convertDateFormat(inputDate) {
+    return inputDate.replace(/-/g, '/'); // YYYY/MM/DD 형식으로 변환
+  }
+  
+  const startDateTime = new Date(convertDateFormat(`${startDate} ${startTime}`));
+  const endDateTime = new Date(convertDateFormat(`${startDate} ${endTime}`));
   const now = new Date();
   const countdownElement = document.getElementById("countdown");
   
@@ -38,9 +44,9 @@ function startCountdown(startDate, startTime, endTime) {
     /* 10밀리초마다 업데이트 */
     const interval = setInterval(updateCountdown, 10);
   } else {
-    console.log("카운트다운이 시작되지 않았거나 이미 종료됨");
+    countdownElement.innerHTML = "00 : 00 : 00 : 00";
   }
 }
 /* countdown start */
-startCountdown("2023-12-05", "11:00:00", "12:00:00"); /* s
+startCountdown("2023-12-06", "3:00:00", "20:00:00"); /* start date, start hour, end hour */
 ```
