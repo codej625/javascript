@@ -335,3 +335,19 @@ Kakao.isInitialized(); /* kakao init */
 ```
 소스를 활용해서 프론트 단에서 활용하거나 그전에 데이터베이스에 저장을 할 수도 있다.
 ```
+```javascript
+모바일 환경에서는
+window.open(`/${uri}?age=${age}`, 'age', '_blank');
+위와 같이 새로운 창을 띄워서 쿠키 문제를 해결할수도 있고,
+응용해서
+
+const params = new URLSearchParams(window.location.search);
+const age = params.get('age');
+
+Kakao.Auth.authorize({
+  redirectUri: ${uri},
+  state: age
+});
+위와 같이 state의 원래 용도와는 다르지만 state를 활용하여
+특정 값을 함께 보내는 것도 가능하다.
+```
