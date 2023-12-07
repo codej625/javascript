@@ -4,14 +4,14 @@
 
 ```javascript
 /* countdown */
-function startCountdown(startDate, startTime, endTime) {
-  // 날짜 형식을 변환하는 함수
-  function convertDateFormat(inputDate) {
-    return inputDate.replace(/-/g, '/'); // YYYY/MM/DD 형식으로 변환
+  function startCountdown(startDate, startTime, endTime) {
+  // 날짜 및 시간을 ISO 8601 형식으로 변환하는 함수
+  function toISOFormat(date, time) {
+    return `${date}T${time}`;
   }
   
-  const startDateTime = new Date(convertDateFormat(`${startDate} ${startTime}`));
-  const endDateTime = new Date(convertDateFormat(`${startDate} ${endTime}`));
+  const startDateTime = new Date(toISOFormat(startDate, startTime));
+  const endDateTime = new Date(toISOFormat(startDate, endTime));
   const now = new Date();
   const countdownElement = document.getElementById("countdown");
   
@@ -49,4 +49,10 @@ function startCountdown(startDate, startTime, endTime) {
 }
 /* countdown start */
 startCountdown("2023-12-06", "3:00:00", "20:00:00"); /* start date, start hour, end hour */
+```
+
+<br />
+
+```
+사파리에서는 YYYY-MM-DD 형식을 인식 못하므로, YYYY-MM-DDTHH:mm:ss (ISO 8601 형식)으로 변환하였음
 ```
