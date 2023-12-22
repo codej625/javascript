@@ -49,6 +49,22 @@ function fetchData(page) {
     });
 }
 
+/* post 방식 */
+function fetchData(page) {
+  ...
+
+  fetch('/history/select', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      rowStart: rowStart,
+      rowEnd: rowEnd
+    })
+  })
+  ...
+
 function displayDataFromAPI(data) {
   const tableBody = document.getElementById('table').getElementsByTagName('tbody')[0];
   tableBody.innerHTML = data.map(item => `<tr><td>${item.domain_name}</td><td>${item.expiration_date}</td></tr>`).join(''); /* contents */
@@ -110,6 +126,19 @@ public Map<String, Object> selectHistory(@RequestParam HashMap<String, Integer> 
   result.put("row", mainMapper.selectHistory(params));
 
   return result;
+}
+
+/* post 방식 */
+@PostMapping("/select")
+public ResponseEntity<Response> selectHistory(@RequestBody Map<String, Integer> params) {
+  ...
+
+  Response response = new HistoryResponse(); /* DTO */
+  response.setRow(/* 조회한 데이터 */);
+  response.setTotal(/* 전체 데이터 개수 */);
+  ...
+  
+  return ResponseEntity.ok(response);
 }
 ```
 ```java
