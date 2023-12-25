@@ -2,22 +2,17 @@
 
 <br/>
 
-javascript
-let outPut = "";
+```javascript
+let tree = "";
 
- //2.loop 횟수설정
-for (var i = 0; i < 15; i++) {
-  //3. 공백 감소
-  for (var j = 15; j > i; j--) {
-    //console.log(`i:${i} , j:${j}`);
-    outPut += " ";
+for (let i = 0; i < 15; i++) {
+  for (let j = 15; j > i; j--) {
+    tree += " ";
   }
-  //4. 별 증가
-  for (var k = 0; k < i * 2 + 1; k++) {
-    outPut += "*";
+  for (let k = 0; k < i * 2 + 1; k++) {
+    tree += "*";
   }
-  //5.줄 바꿈
-  outPut += "\n";
+  tree += "\n";
 }
-console.log(outPut);
-'''
+console.log(tree);
+```
