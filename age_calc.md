@@ -5,9 +5,9 @@
 ```javascript
 function ageCalc(birthday) { /* ex) 20201202 */
   const currentYear = new Date().getFullYear();
-  const birthYear = parseInt(birthday.substring(0, 4));
+  const birthYear = parseInt(birthday.substring(0, 4)); /* int type으로 캐스팅 */
 
-  if (isNaN(birthYear)) { /* 기본적인 유효성 검사 */
+  if (isNaN(birthYear)) { /* isNaN -> is not a number */
     return ['', ''];
   }
   const age = currentYear - birthYear + 1; /* 한국 기준으로 현재 나이 계산 */
