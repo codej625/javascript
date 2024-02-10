@@ -2,10 +2,9 @@
 
 
 ```html
-<input class="all" name="all-agree" type="checkbox">
-
-<input class="btn-1" name="agree" type="checkbox">
-<input class="btn-2" name="agree" type="checkbox">
+<input name="all-agree" type="checkbox">
+<input name="agree" type="checkbox">
+<input name="agree" type="checkbox">
 ```
 ```javascript
 const allAgree = document.querySelector('input[name="all-agree"]');
