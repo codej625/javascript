@@ -5,6 +5,7 @@
 ```javascript
 const counter = (function () {
   let privateCounter = 0;
+
   function changeBy(val) {
     privateCounter += val;
   }
@@ -24,33 +25,37 @@ const counter = (function () {
   };
 })();
 
-console.log(counter.value()); // 0.
+console.log(counter.value()); /* 0 */
 counter.increment();
+console.log(counter.value()); /* 1 */
 counter.decrement();
+console.log(counter.value()); /* 0 */
 ```
 
-```javascrilpt
-function createCounter() {
-  let privateCounter = 0;
-  
-  function changeBy(val) {
-    privateCounter += val;
+<br />
+
+```javascript
+/* ex) */
+
+function tbody() {
+  let tbody = null;
+
+  function re() {
+    tbody = document.querySelectorAll('#tbody tr');
   }
-
+  function reload() {
+    re();
+  }
+  function result() {
+    return tbody;
+  }
+  
   return {
-    increment() {
-      changeBy(1);
-    },
-
-    decrement() {
-      changeBy(-1);
-    },
-
-    value() {
-      return privateCounter;
-    },
-  };
+    reload: reload(),
+    result: result()
+  }
 }
 
-const counter = createCounter();
+tbody().reload;
+console.log(tbody().result);
 ```
