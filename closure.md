@@ -59,3 +59,36 @@ function tbody() {
 tbody().reload;
 console.log(tbody().result);
 ```
+```
+tbody라는 변수값에 null을 대입해 초기화한다.
+re()라는 내부 함수는 외부함수에 접근하여,
+tbody 변수의 동적으로 변하는 요소의 값을 가져온다.
+그리고 result라는 내부 함수를 통해 외부함수에 접근하여 tbody값을 반환한다.
+외부함수에 반환 값으로는 내부 함수를 반환되게 한다.
+```
+
+<br />
+
+```javascript
+/* ex) */
+function fetchData(callback) {
+  setTimeout(function() {
+    var data = 'This is the fetched data';
+    callback(data);
+  }, 2000); /* 2초 후에 실행 */
+}
+
+/* fetchData 함수 호출 및 클로저로 구성된 콜백 함수 전달 */
+fetchData(function(data) {
+  console.log('Fetched data:', data);
+});
+```
+```
+fetchData 함수는 비동기적으로 데이터를 가져오는 작업을 수행한다.
+이 함수는 콜백 함수를 인자로 받아 데이터를 전달한다.
+비동기 작업이 완료되면 콜백 함수가 호출되어 데이터를 처리할 수 있다.
+
+여기서 클로저의 역할은 콜백 함수로 전달된 익명 함수에 있다.
+이 익명 함수는 외부 함수인 fetchData의 범위 내의 변수나 인자를 사용할 수 있다.
+따라서 data 변수에 접근하여 비동기 작업으로부터 받은 데이터를 처리할 수 있게 된다.
+```
