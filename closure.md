@@ -92,3 +92,36 @@ fetchData 함수는 비동기적으로 데이터를 가져오는 작업을 수�
 이 익명 함수는 외부 함수인 fetchData의 범위 내의 변수나 인자를 사용할 수 있다.
 따라서 data 변수에 접근하여 비동기 작업으로부터 받은 데이터를 처리할 수 있게 된다.
 ```
+
+<br />
+
+```javascript
+/* ex3) */
+function outerFunction(outerVariable) {
+
+  return function innerFunction(innerVariable) {
+    console.log('outerVariable:', outerVariable);
+    console.log('innerVariable:', innerVariable);
+  }
+}
+
+const newFunction = outerFunction('outside');
+newFunction('inside');  /* logs: outerVariable: outside, innerVariable: inside */
+```
+```
+outerFunction은 함수를 반환하는 함수이다.
+이 반환된 함수는 innerFunction이다.
+outerFunction을 호출하면서 'outside'라는 값을 인자로 전달하면,
+이 값은 outerVariable에 할당된다.
+
+그런 다음, outerFunction은 innerFunction을 반환한다.
+이 때 innerFunction은 outerVariable에 대한 참조를 유지하게 된다.
+이것이 클로저의 핵심 개념이다.
+
+따라서 newFunction은 이제 innerFunction을 참조하는 변수가 된다.
+그리고 innerFunction은 outerVariable에 대한 참조를 유지하고 있다.
+
+newFunction('inside')를 호출하면,
+이는 사실상 innerFunction('inside')를 호출하는 것과 같다.
+이 때 'inside'라는 값은 innerVariable에 할당 된다.
+```
