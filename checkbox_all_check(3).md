@@ -3,12 +3,12 @@
 <br />
 
 ```html
-<div id="checkBox"></div>
+<div id="check-box"></div>
 ```
 
 ```javascript
 (() => {
-  const html = document.querySelector('#checkBox');
+  const html = document.querySelector('#check-box');
   html.innerHTML = `
     <table>
       <thead>
