@@ -13,7 +13,7 @@
     <table>
       <thead>
         <tr>
-          <th><input id="all" name="all-agree" type="checkbox"></th>
+          <th><input id="all" name="select-all" type="checkbox"></th>
           <th>이름</th>
           <th>나이</th>
           <th>성별</th>
@@ -21,19 +21,19 @@
       </thead>
       <tbody>
         <tr>
-          <td><input class="check" name="agree" type="checkbox" value="1"></td>
+          <td><input class="single" name="select" type="checkbox" value="1"></td>
           <td>이진우</td>
           <td>34살</td>
           <td>남자</td>
         </tr>
         <tr>
-          <td><input class="check" name="agree" type="checkbox" value="2"></td>
+          <td><input class="single" name="select" type="checkbox" value="2"></td>
           <td>김진주</td>
           <td>31살</td>
           <td>여자</td>
         </tr>
         <tr>
-          <td><input class="check" name="agree" type="checkbox" value="3"></td>
+          <td><input class="check" name="select" type="checkbox" value="3"></td>
           <td>김원찬</td>
           <td>34살</td>
           <td>남자</td>
@@ -44,22 +44,22 @@
 })();
 /* 전체 체크시에도 객체가 생성되게 클로저를 사용하여 기능 구현해야 함 */
 
-const allAgree = document.querySelector('input[name="all-agree"]');
-const agree = document.querySelectorAll('input[name="agree"]');
+const all = document.querySelector('input[name="select-all"]');
+const single = document.querySelectorAll('input[name="select"]');
 
-allAgree.addEventListener('click', () => {
-  const check = allAgree.checked;
+all.addEventListener('click', () => {
+  const check = all.checked;
 
-  agree.forEach(chk => {
+  single.forEach(chk => {
     chk.checked = check;
   });
 });
-agree.forEach(check => {
-  check.addEventListener('change', () => {
+single.forEach(chk => {
+  chk.addEventListener('change', () => {
     let allChecked = true;
     const set = new Set();
 
-    agree.forEach(chk => {
+    single.forEach(chk => {
       if (chk.checked) {
         const tr = chk.parentNode.parentNode;
         const td = tr.querySelectorAll('td');
@@ -83,7 +83,7 @@ agree.forEach(check => {
         allChecked = false;
       }
     });
-    allAgree.checked = allChecked;
+    all.checked = allChecked;
 
     set.forEach(ele => {
       console.log(ele);
