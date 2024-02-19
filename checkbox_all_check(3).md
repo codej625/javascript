@@ -33,7 +33,7 @@
           <td>여자</td>
         </tr>
         <tr>
-          <td><input class="check" name="select" type="checkbox" value="3"></td>
+          <td><input class="single" name="select" type="checkbox" value="3"></td>
           <td>김원찬</td>
           <td>34살</td>
           <td>남자</td>
@@ -66,14 +66,8 @@ single.forEach(chk => {
         const obj = {};
 
         td.forEach((element, index) => {
-          if (index === 1) {
-            obj['name'] = element.textContent;
-          }
-          if (index === 2) {
-            obj['age'] = element.textContent;
-          }
-          if (index === 3) {
-            obj['sex'] = element.textContent;
+          if (index !== 0) { /* 첫번째 로우는 제외 */
+            obj[insertValueByIndex(index)] = element.textContent;
           }
         });
         set.add(obj); /* 중복 제거 */
@@ -85,9 +79,38 @@ single.forEach(chk => {
     });
     all.checked = allChecked;
 
-    set.forEach(ele => {
+    set.forEach(ele => { /* 확인용 */
       console.log(ele);
     });
   });
 });
+```
+```javascript
+function insertValueByIndex(index) {
+  switch (index) {
+    case 1: return 'seq';
+    case 2: return 'inflowDate';
+    case 3: return 'dateTime';
+    case 4: return 'ip';
+    case 5: return 'device';
+    case 6: return 'brand';
+    case 7: return 'age';
+    case 8: return 'grade';
+    case 9: return 'name';
+    case 10: return 'phone';
+    case 11: return 'gender';
+    case 12: return 'media';
+    case 13: return 'loginType';
+    case 14: return 'sourceCode';
+    case 15: return 'mediumCode';
+    case 16: return 'campaignCode';
+    case 17: return 'contentsCode';
+    case 18: return 'termCode';
+    case 19: return 'agreeCheck1';
+    case 20: return 'agreeCheck2';
+    case 21: return 'agreeCheck3';
+    case 22: return 'accessDate';
+    default: return '';
+  }
+}
 ```
