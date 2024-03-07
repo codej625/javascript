@@ -20,15 +20,14 @@
 ```
 
 ```javascript
-
-1)
 const a = true;
 const b = false;
 const result = a || b; /* true */
+```
 
-2)
-const a = null;
-const b = ' ';
+```javascript
+const a = ' ';
+const b = null;
 if (a === null || b === null) {
   console.log('a는 false이지만, b는 true이기 때문에 if문이 작동된다.');
 }
@@ -38,12 +37,11 @@ if (a === null || b === null) {
 
 ```
 논리 OR 연산자는 변수에 기본값을 설정할 때 유용하다.
-만약 왼쪽의 값이 falsy한 경우 (즉, 존재하지 않거나 false, 0, null, undefined, 빈 문자열 등),
+만약 왼쪽의 값이 falsy한 경우 (즉, 존재하지 않거나 false, 0, null, undefined, 빈 문자열('') 등),
 오른쪽의 값을 사용한다.
 ```
 
 ```javascript
-
 /* 만약 process.env.PORT가 설정되지 않았다면 기본값으로 8080을 사용 */
 const port = process.env.PORT || 8080;
 ```
