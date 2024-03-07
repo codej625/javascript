@@ -14,9 +14,12 @@
 
 <br />
 
-```javascript
+```
 이것이 가장 일반적인 사용 방법이다.
 두 개의 조건 중 하나라도 참이면 전체 표현식은 true로 평가된다.
+```
+
+```javascript
 
 1)
 const a = true;
@@ -33,10 +36,13 @@ if (a === null || b === null) {
 
 <br />
 
-```javascript
+```
 논리 OR 연산자는 변수에 기본값을 설정할 때 유용하다.
 만약 왼쪽의 값이 falsy한 경우 (즉, 존재하지 않거나 false, 0, null, undefined, 빈 문자열 등),
 오른쪽의 값을 사용한다.
+```
+
+```javascript
 
 /* 만약 process.env.PORT가 설정되지 않았다면 기본값으로 8080을 사용 */
 const port = process.env.PORT || 8080;
