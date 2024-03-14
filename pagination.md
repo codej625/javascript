@@ -9,11 +9,13 @@
     <colgroup>
       <col width="*">
       <col width="*">
+      <col width="*">
     </colgroup>
     <thead id="" class="">
       <tr>
         <th>columns1</th>
         <th>columns2</th>
+        <th>columns3</th>
       </tr>
     </thead>
     <tbody id="create-table-row" class=""></tbody>
@@ -30,7 +32,7 @@ let currentPage = 1;
 const pageSize = 10;
 const maxPageButtons = 5;
 
-function fetchData(page) {
+function fetchData(page = 1) {
   currentPage = page;
   const rowStart = (page - 1) * pageSize + 1;
   const rowEnd = rowStart + pageSize - 1;
@@ -38,17 +40,17 @@ function fetchData(page) {
   console.log(rowStart, rowEnd); /* ex) 1, 10 */
 
   /* get 방식 */
-  fetch(`/history/select?rowStart=${rowStart}&rowEnd=${rowEnd}`, {
+  fetch(`/history/select?rowStart=${rowStart-1}&rowEnd=${rowEnd}`, {
     method: "get",
   })
-    .then((response) => response.json())
-    .then((data) => {
-      displayDataFromAPI(data.row);
-      updatePaginationButtons(data.total, currentPage);
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
+  .then((response) => response.json())
+  .then((data) => {
+    displayDataFromAPI(data.row);
+    updatePaginationButtons(data.total, currentPage);
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });
 
   /* post 방식 */
   ...
@@ -62,42 +64,90 @@ function fetchData(page) {
       rowEnd,
     })
   })
-    .then((response) => response.json())
-    .then((data) => {
-      displayDataFromAPI(data.row);
-      updatePaginationButtons(data.total, currentPage);
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
+  .then((response) => response.json())
+  .then((data) => {
+    displayDataFromAPI(data.row);
+    updatePaginationButtons(data.total, currentPage);
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });
   ...
 }
 
 function displayDataFromAPI(data) {
   const tableBody = document.getElementById('table').getElementsByTagName('tbody')[0];
-  tableBody.innerHTML = data.map(item => `
-    <tr>
-      <td>${item.domain_name}</td>      
-      <td>${item.expiration_date}</td>
-    </tr>`).join(''); /* contents */
+  tableBody.innerHTML = '';
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    const dateCell = document.createElement('td');
+    dateCell.textContent = item.date;
+    row.appendChild(dateCell);
+  
+    const blockedContentCell = document.createElement('td');
+    blockedContentCell.textContent = item.blockedContent;
+    row.appendChild(blockedContentCell);
+  
+    const modifiedDateCell = document.createElement('td');
+    modifiedDateCell.textContent = item.modifiedDate;
+    row.appendChild(modifiedDateCell);
+  
+    const buttonCell = document.createElement('td');
+    
+    const editButton = document.createElement('button');
+    editButton.className = "btn btn-outline-secondary mr-1";
+    editButton.type = "button";
+    editButton.textContent = "수정";
+    editButton.addEventListener('click', () => {
+      updatePhone(item.seq);
+    });
+    buttonCell.appendChild(editButton);
+  
+    const deleteButton = document.createElement('button');
+    deleteButton.className = "btn btn-outline-secondary";
+    deleteButton.type = "button";
+    deleteButton.textContent = "삭제";
+    deleteButton.addEventListener('click', () => {
+      deletePhone(item.seq);
+    });
+    buttonCell.appendChild(deleteButton);
+  
+    row.appendChild(buttonCell);
+  
+    tableBody.appendChild(row);
+  });
 }
 
 function updatePaginationButtons(total, currentPage) {
   const totalPage = Math.ceil(total / pageSize);
   let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   let endPage = Math.min(totalPage, startPage + maxPageButtons - 1);
-
   startPage = Math.max(1, endPage - maxPageButtons + 1);
 
   const paginationContainer = document.getElementById('pagination');
   paginationContainer.innerHTML = '';
 
+  /* first page button */
+  const firstPageButton = document.createElement('button');
+  firstPageButton.innerText = '<<';
+  firstPageButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
+  firstPageButton.onclick = () => fetchData(1);
+  paginationContainer.appendChild(firstPageButton);
+  /* page buttons */
   for (let i = startPage; i <= endPage; i++) {
     const button = document.createElement('button');
     button.innerText = i;
+    button.classList.add('btn', 'btn-outline-secondary', 'mx-1');
     button.onclick = () => fetchData(i);
     paginationContainer.appendChild(button);
   }
+  /* Add last page button */
+  const lastPageButton = document.createElement('button');
+  lastPageButton.innerText = '>>';
+  lastPageButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
+  lastPageButton.onclick = () => fetchData(totalPage);
+  paginationContainer.appendChild(lastPageButton);
 }
 fetchData(1);
 ```
