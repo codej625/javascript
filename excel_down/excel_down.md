@@ -21,7 +21,7 @@ Excel JS 라이브러리를 사용해서 구현
 function tableToExcel() { /* table to excel */
   const tableName = document.getElementById({table_id});
   const workBook = XLSX.utils.table_to_book(tableName, { sheet: {sheet_name}, raw: true }); 
-  const fileName = 'file_name.xlsx';
+  const fileName = '{file_name}.xlsx';
   
   return XLSX.writeFile(workBook, fileName, { bookType:'xlsx',  type: 'binary' }); /* excel extension, binary or string */
 }
