@@ -1,2 +1,1 @@
-# javascript_2023_2024
-20230911 다시 시작하는 자바스크립트
+# frequently_used_javascript_technologies
