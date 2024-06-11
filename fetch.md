@@ -1,64 +1,38 @@
-# axios가 아닌 fetch를 사용하여 비동기 처리를 해보자!
+# fetch를 사용하는 비동기 처리
 
-<br/>
+<br/><br/>
 
+1. POST
 ```javascript
-ex) post
-
-async function postData(url, data) {
+const sendClientID = async (key) => {
   try {
-    const requestOptions = {
-      method: 'POST', // 요청 방식 설정
-      headers: {
-        'Content-Type': 'application/json' // 내용 유형을 JSON으로 설정
-      },
-      body: JSON.stringify(data) // 데이터를 JSON 문자열로 변환
-    };
+    const response = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+    });
+    if (response.ok) console.log('response ', response);
 
-    const response = await fetch(url, requestOptions);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json(); // JSON 형태로 응답을 파싱 한다.
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error ', error);
   }
-}
-
-postData('https://example.com/test', { test: 'test' })
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error in postData:', error);
-  });
+};
+sendClientID('codej625');
 ```
 
+<br />
+
+2. GET
 ```javascript
-ex) get
-
-async function fetchData(url) {
+const fetchData = async () => {
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const response = await fetch('/auth/login');
 
-    const data = await response.json();
+    if (response.ok) console.log('response ', response);
 
-    return data;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Error ', error);
   }
 }
-
-fetchData('https://example.com/test')
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error in fetchData:', error);
-  });
+fetchData();
 ```
-아니면 즉시 실행 함수에 넣어서 함수를 실행시키는 것도 가능하다.
