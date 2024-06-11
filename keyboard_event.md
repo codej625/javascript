@@ -41,17 +41,13 @@
 * 사용 예시
 ---
 
+<br />
+
+1. 키보드 이벤트 받기
+ 
 ```html
-<!DOCTYPE html>
-<head>
-  <meta charset="UTF-8">
-  <title>ex</title>
-</head>
-<body>
-  <input id="num" type="hidden"/>
-  <div id="output"></div>
-</body>
-</html>
+<input id="num" type="hidden" />
+<div id="output"></div>
 ```
 
 <br />
@@ -80,4 +76,47 @@ document.addEventListener('keydown', function (event) {
 키보드를 입력하면,
 input(hidden)태그의 value에 키보드 입력값을 대입.
 Enter를 누르면 input태그의 value를 리셋.
+```
+
+<br /><br />
+
+1. 키보드 이벤트 받기(2)
+
+```html
+<input id="num" type="hidden" />
+```
+
+<br />
+
+```javascript
+let start = false;
+const num = document.getElementById("num");
+
+document.addEventListener('keydown', function (e) {
+  const keyPressed = e.key;
+
+  /* 1. F2를 누르면 Hidden input에 값 입력 활성화. */
+  if (keyPressed === 'F2') {
+    num.focus();
+    start = true;
+  }
+  if (start) { num.value += keyPressed; }
+
+  /* Enter를 누르면 처음에 입력된 F2와 Enter를 지우고 서버로 전송. */
+  if (start && keyPressed === 'Enter') {
+    const clientID = num.value.replace(/F2|Enter/g, "");
+    start = false;
+    num.value = '';
+
+    /* 서버로 전송 로직 */
+    console.log('submit -> ', clientID);
+  }
+});
+```
+
+<br />
+
+```
+F2를 입력하면 input에 값을 대입.
+Enter를 입력하면 input에 값을 비우고 서버로 전송.
 ```
