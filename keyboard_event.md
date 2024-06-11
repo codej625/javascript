@@ -89,7 +89,7 @@ Enter를 누르면 input태그의 value를 리셋.
 <br />
 
 ```javascript
-let start = false;
+let isEnabled = false;
 const hiddenInput = document.getElementById("hidden");
 
 document.addEventListener('keydown', function (e) {
@@ -98,14 +98,14 @@ document.addEventListener('keydown', function (e) {
   /* 1. F2를 누르면 Hidden input에 값 입력 활성화. */
   if (keyPressed === 'F2') {
     hiddenInput.focus();
-    start = true;
+    isEnabled = true;
   }
-  if (start) { hiddenInput.value += keyPressed; }
+  if (isEnabled) { hiddenInput.value += keyPressed; }
 
   /* Enter를 누르면 처음에 입력된 F2와 Enter를 지우고 서버로 전송. */
-  if (start && keyPressed === 'Enter') {
+  if (isEnabled && keyPressed === 'Enter') {
     const clientID = hiddenInput.value.replace(/F2|Enter/g, "");
-    start = false;
+    isEnabled = false;
     hiddenInput.value = '';
 
     /* 서버로 전송 로직 */
