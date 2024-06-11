@@ -46,7 +46,7 @@
 1. 키보드 이벤트 받기
  
 ```html
-<input id="num" type="hidden" />
+<input id="hidden" type="hidden" />
 <div id="output"></div>
 ```
 
@@ -54,19 +54,19 @@
 
 ```javascript
 const output = document.getElementById("output");
-const num = document.getElementById("num");
-num.focus();
+const hiddenInput = document.getElementById("hidden");
+hiddenInput.focus();
 
 document.addEventListener('keydown', function (event) {
   const keyPressed = event.key;
 
   if (keyPressed === 'Enter') {
     output.textContent = '';
-    num.value = '';
+    hiddenInput.value = '';
   } else {
-    num.value += keyPressed;
+    hiddenInput.value += keyPressed;
   }
-  output.textContent = `input -> ${num.value}`;
+  output.textContent = `input -> ${hiddenInput.value}`;
 });
 ```
 
@@ -83,30 +83,30 @@ Enter를 누르면 input태그의 value를 리셋.
 1. 키보드 이벤트 받기(2)
 
 ```html
-<input id="num" type="hidden" />
+<input id="hidden" type="hidden" />
 ```
 
 <br />
 
 ```javascript
 let start = false;
-const num = document.getElementById("num");
+const hiddenInput = document.getElementById("hidden");
 
 document.addEventListener('keydown', function (e) {
   const keyPressed = e.key;
 
   /* 1. F2를 누르면 Hidden input에 값 입력 활성화. */
   if (keyPressed === 'F2') {
-    num.focus();
+    hiddenInput.focus();
     start = true;
   }
-  if (start) { num.value += keyPressed; }
+  if (start) { hiddenInput.value += keyPressed; }
 
   /* Enter를 누르면 처음에 입력된 F2와 Enter를 지우고 서버로 전송. */
   if (start && keyPressed === 'Enter') {
-    const clientID = num.value.replace(/F2|Enter/g, "");
+    const clientID = hiddenInput.value.replace(/F2|Enter/g, "");
     start = false;
-    num.value = '';
+    hiddenInput.value = '';
 
     /* 서버로 전송 로직 */
     console.log('submit -> ', clientID);
