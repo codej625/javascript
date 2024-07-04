@@ -24,7 +24,7 @@
 1. CSS
 ```css
 #toast {
-  opacity: 0%;
+  opacity: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +40,12 @@
   transition: all 0.4s;
   color: var(--color-main);
   font-size: 40px; font-weight: 700;
-} 
+}
+
+#toast.active {
+  opacity: 1;
+  bottom: 32px;
+}
 ```
 
 <br /><br />
@@ -58,14 +63,15 @@
 ```javascript
 document.addEventListener("DOMContentLoaded", function () {
 
-  const toastMessage = document.getElementById('toast');
+  const toastMessage = document.querySelector('#toast');
   const hasShownToast = sessionStorage.getItem('hasShownToast');
 
   if (!hasShownToast) {
-    toastMessage.classList.add('active');
 
     function showToast() {
-      setTimeout(function () {
+      toastMessage.classList.add('active');
+
+      setTimeout(() => {
         toastMessage.classList.remove('active');
         sessionStorage.setItem('hasShownToast', 'true');
       }, 2000);
