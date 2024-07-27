@@ -19,6 +19,7 @@ const delay = (ms) => {
     setTimeout(resolve, ms);
   });
 };
+// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const task = async () => {
   await delay(2000); // 2초 동안 대기
