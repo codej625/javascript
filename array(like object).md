@@ -1,6 +1,6 @@
-# 유사 배열에 array method를 사용해보자!
+# 유사 배열에 Array method를 사용해보자!
 
-<br />
+<br /><br />
 
 ex)
 ```javascript
