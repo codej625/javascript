@@ -1,255 +1,236 @@
-# 페이징을 구현해보자!
+# Pagination
 
-<br/>
+<br /><br />
 
 1. HTML
+
 ```html
-<div>
-  <table id="table" class="">
-    <colgroup>
-      <col width="*">
-      <col width="*">
-      <col width="*">
-    </colgroup>
-    <thead id="" class="">
-      <tr>
-        <th>columns1</th>
-        <th>columns2</th>
-        <th>columns3</th>
-      </tr>
-    </thead>
-    <tbody id="create-table-row" class=""></tbody>
-  </table>
-  <div id="pagination" class=""></div>
-</div>
+<ul class="pagination">
+  <li><button id="first-btn">First</button></li>
+  <li><button id="prev-btn">Previous</button></li>
+  <li id="page-buttons"></li>
+  <li><button id="next-btn">Next</button></li>
+  <li><button id="last-btn">Last</button></li>
+</ul>
 ```
 
-<br/>
+<br /><br /><br />
 
-2. script
+2. CSS
+
+```css
+.pagination {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+}
+.pagination li {
+  margin: 0 5px;
+}
+.pagination button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+```
+
+<br /><br /><br />
+
+3. Javascript
+
 ```javascript
-let currentPage = 1;
-const pageSize = 10;
-const maxPageButtons = 5;
+let currentPage = 1; // 현재 페이지
+let currentGroupStart = 1; // 현재 페이지 그룹의 시작 페이지
+const rowsPerPage = 15; // 페이지당 데이터 개수
+const buttonsPerGroup = 5; // 페이지 그룹당 버튼 개수
 
-function fetchData(page = 1) {
+// 데이터와 총 데이터 개수를 서버에서 가져오는 함수
+const fetchData = async (start, end) => {
+  try {
+    // 총 데이터 개수 가져오기
+    const countResponse = await fetch('/api/total-count');
+    const totalCount = await countResponse.json();
+    const totalPages = Math.ceil(totalCount / rowsPerPage);
+
+    // 페이지 데이터 가져오기
+    const dataResponse = await fetch(`/api/data?start=${start}&end=${end}`); // start, end 파라미터 필수
+    const data = await dataResponse.json();
+
+    return { data, totalPages };
+  }
+  catch { return { data: [], totalPages: 0 }; }
+};
+
+// 페이지 업데이트 함수
+const updatePage = async (page) => {
+  if (page < 1 || page > Math.ceil(totalCount / rowsPerPage)) return;
   currentPage = page;
-  const rowStart = (page - 1) * pageSize + 1;
-  const rowEnd = rowStart + pageSize - 1;
 
-  console.log(rowStart, rowEnd); /* ex) 1, 10 */
+  // 데이터 범위 계산
+  const start = (page - 1) * rowsPerPage + 1;
+  const end = Math.min(start + rowsPerPage - 1, totalCount);
 
-  /* get 방식 */
-  fetch(`/history/select?rowStart=${rowStart-1}&rowEnd=${rowEnd}`, {
-    method: "get",
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    displayDataFromAPI(data.row);
-    updatePaginationButtons(data.total, currentPage);
-  })
-  .catch((error) => {
-    console.error("Error fetching data:", error);
-  });
+  // 서버에서 데이터 가져오기
+  const { data, totalPages } = await fetchData(start, end);
 
-  /* post 방식 */
-  ...
-  fetch('/history/select', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      rowStart,
-      rowEnd,
-    })
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    displayDataFromAPI(data.row);
-    updatePaginationButtons(data.total, currentPage);
-  })
-  .catch((error) => {
-    console.error("Error fetching data:", error);
-  });
-  ...
-}
+  // 데이터 업데이트
+  const dataContainer = document.getElementById('data-container');
+  dataContainer.innerHTML = data.map(ele => ele.key).join("<br>"); // 예시
 
-function displayDataFromAPI(data) {
-  const tableBody = document.getElementById('table').getElementsByTagName('tbody')[0];
-  tableBody.innerHTML = '';
+  // 페이지 버튼 업데이트
+  const pageButtonsContainer = document.getElementById('page-buttons');
+  pageButtonsContainer.innerHTML = '';
 
-  data.forEach(item => {
-    const row = document.createElement('tr');
-    const dateCell = document.createElement('td');
-    dateCell.textContent = item.date;
-    row.appendChild(dateCell);
-  
-    const blockedContentCell = document.createElement('td');
-    blockedContentCell.textContent = item.blockedContent;
-    row.appendChild(blockedContentCell);
-  
-    const modifiedDateCell = document.createElement('td');
-    modifiedDateCell.textContent = item.modifiedDate;
-    row.appendChild(modifiedDateCell);
-  
-    const buttonCell = document.createElement('td');
-    
-    const editButton = document.createElement('button');
-    editButton.className = "btn btn-outline-secondary mr-1";
-    editButton.type = "button";
-    editButton.textContent = "수정";
-    editButton.addEventListener('click', () => {
-      updatePhone(item.seq);
-    });
-    buttonCell.appendChild(editButton);
-  
-    const deleteButton = document.createElement('button');
-    deleteButton.className = "btn btn-outline-secondary";
-    deleteButton.type = "button";
-    deleteButton.textContent = "삭제";
-    deleteButton.addEventListener('click', () => {
-      deletePhone(item.seq);
-    });
-    buttonCell.appendChild(deleteButton);
-  
-    row.appendChild(buttonCell);
-  
-    tableBody.appendChild(row);
-  });
-}
+  // 현재 페이지 그룹의 시작과 끝 페이지 계산
+  const startPage = currentGroupStart;
+  const endPage = Math.min(startPage + buttonsPerGroup - 1, totalPages);
 
-function updatePaginationButtons(total, currentPage) {
-  const totalPage = Math.ceil(total / pageSize);
-  let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
-  let endPage = Math.min(totalPage, startPage + maxPageButtons - 1);
-  startPage = Math.max(1, endPage - maxPageButtons + 1);
-
-  const paginationContainer = document.getElementById('pagination');
-  paginationContainer.innerHTML = '';
-
-  /* first page button */
-  const firstPageButton = document.createElement('button');
-  firstPageButton.innerText = '<<';
-  firstPageButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
-  firstPageButton.onclick = () => fetchData(1);
-  paginationContainer.appendChild(firstPageButton);
-  /* page buttons */
   for (let i = startPage; i <= endPage; i++) {
     const button = document.createElement('button');
-    button.innerText = i;
-    button.classList.add('btn', 'btn-outline-secondary', 'mx-1');
-    button.onclick = () => fetchData(i);
-    paginationContainer.appendChild(button);
+    button.textContent = i;
+    button.disabled = i === currentPage;
+    button.onclick = () => updatePage(i);
+    pageButtonsContainer.appendChild(button);
   }
-  /* Add last page button */
-  const lastPageButton = document.createElement('button');
-  lastPageButton.innerText = '>>';
-  lastPageButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
-  lastPageButton.onclick = () => fetchData(totalPage);
-  paginationContainer.appendChild(lastPageButton);
-}
-fetchData(1);
-```
-```
-간단 설명
 
-1) fetchData 
-이 함수는 페이지 번호를 인자로 받아, 현재 페이지(currentPage)를 설정 한다.
-rowStart와 rowEnd를 계산하여 서버에 요청할 데이터의 범위를 지정 한다.
-fetch API를 사용해 서버로부터 데이터를 받아오며,
-성공 시 displayDataFromAPI와 updatePaginationButtons 함수를 호출 한다.
+  // 네비게이션 버튼 업데이트
+  document.getElementById('prev-btn').disabled = currentGroupStart === 1;
+  document.getElementById('next-btn').disabled = endPage === totalPages;
+  document.getElementById('first-btn').disabled = currentGroupStart === 1;
+  document.getElementById('last-btn').disabled = endPage === totalPages;
+};
 
-2) displayDataFromAPI
-이 함수는 서버로부터 받은 데이터를 테이블에 표시 한다.
-data 배열을 반복하여 HTML 테이블 행(<tr>)을 생성하고,
-이를 테이블 본문에 삽입 한다.
+// 버튼 클릭 이벤트 설정
+document.getElementById('first-btn').onclick = () => {
+  currentGroupStart = 1;
+  updatePage(1);
+};
 
-3) updatePaginationButtons
-이 함수는 전체 페이지 수와 현재 페이지를 기반으로 페이징 버튼을 업데이트 한다.
-totalPage는 전체 페이지 수를 계산 한다.
-startPage와 endPage는 표시할 페이지 버튼의 시작과 끝 번호를 계산 한다.
-페이지 버튼은 동적으로 생성되며,
-각 버튼은 fetchData 함수를 호출하도록 설정 된다.
+document.getElementById('prev-btn').onclick = () => {
+  currentGroupStart = Math.max(1, currentGroupStart - buttonsPerGroup);
+  updatePage(currentGroupStart);
+};
 
-4) 페이지 초기 로드
-스크립트가 로드되면 fetchData(1)이 호출되어 첫 번째 페이지의 데이터를 로드 한다.
-```
+document.getElementById('next-btn').onclick = () => {
+  const totalPages = Math.ceil(totalCount / rowsPerPage);
+  currentGroupStart = Math.min(totalPages - buttonsPerGroup + 1, currentGroupStart + buttonsPerGroup);
+  updatePage(currentGroupStart);
+};
 
-<br/>
+document.getElementById('last-btn').onclick = () => {
+  const totalPages = Math.ceil(totalCount / rowsPerPage);
+  currentGroupStart = Math.max(1, totalPages - buttonsPerGroup + 1);
+  updatePage(currentGroupStart);
+};
 
-3. 백엔드 서버(스프링으로 간단하게 구현시)
-
-##### get 방식
-```java
-/* RestController */
-
-@GetMapping(value = "/history/select")
-public Map<String, Object> selectHistory(@RequestParam Map<String, Integer> params) throws Exception {
-  log.info(">>> DevRestController selectHistory >>>");
-  
-  HashMap<String, Object> result = new HashMap<>();
-  result.put("total", mainMapper.selectHistoryCount());
-  result.put("row", mainMapper.selectHistory(params));
-
-  return result;
-}
-```
-
-##### post 방식
-```gradle
-/* 의존성 추가 */
-implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0' /* 현재 버전에 맞게 수정 */
-```
-
-```java
-@PostMapping("/select")
-public ResponseEntity<Response> selectHistory(@RequestBody Map<String, Integer> params) throws Exception {
-  ...
-  HashMap<String, Object> result = new HashMap<>();
-  result.put("total", mainMapper.selectHistoryCount());
-  result.put("row", mainMapper.selectHistory(params));
-  ...
-  /* ObjectMapper를 사용하여 JSON 문자열로 변환 */
-  ObjectMapper objectMapper = new ObjectMapper();
-  String json;
+// 초기화
+let totalCount = 0;
+const initialize = async () => {
   try {
-    json = objectMapper.writeValueAsString(responseMap);
-  } catch (JsonProcessingException e) {
-    e.printStackTrace();
-    /* JSON 변환에 실패한 경우 에러 응답 반환 */
-    return ResponseEntity.status(500).body("Error converting response to JSON");
+    const response = await fetch('/api/total-count'); // 예시
+    totalCount = await response.json();
+    updatePage(currentPage);
   }
-  return ResponseEntity.ok(json);
-}
+  catch { console.error('Failed to initialize pagination error'); }
+};
+
+initialize();
+
+// fetchData 함수
+// start와 end 파라미터를 사용하여 서버에서 데이터를 가져온다.
+// 총 데이터 개수를 가져와 totalPages를 계산한다.
+
+
+// updatePage 함수
+// start와 end를 계산하여 해당 범위의 데이터를 서버에서 가져온다.
+// 페이지 버튼을 현재 페이지 그룹에 맞게 업데이트한다.
+
+
+// 초기화
+// initialize 함수에서 총 데이터 개수를 가져와 페이지를 로드한다.
+
+
+// 버튼 클릭 이벤트
+// 페이지 그룹 변경 시 currentGroupStart를 조정하고 페이지를 업데이트한다.
 ```
 
-<br />
+<br /><br /><br />
 
-##### 공통 적용
+4. Java
+
 ```java
-/* Mapper Interface */
+// Controller
 
-public List<Map<String, Object>> selectHistory(Map<String, Integer> params) throws Exception;
-public Integer selectHistoryCount() throws Exception;
+@ResponseBody
+@GetMapping(value = "/api/total-count") // 예시
+public ResponseEntity<Integer> getTotalCount() {
+    Integer totalCount = accountMapper.getTotalCount();
+
+    return ResponseEntity.ok(totalCount);
+}
+
+@ResponseBody
+@GetMapping(value = "/api/data") // 예시
+public ResponseEntity<List<{model_name}>> getData(@RequestParam String start, @RequestParam String end) {
+
+    List<{model_name}> data = accountMapper.getData(new HashMap<String, Object>() {{
+        put("start", start);
+        put("end", end);
+    }});
+
+    return ResponseEntity.ok(data);
+}
+
+// 테스트이기 때문에 Service layer 제외.
+
+// Mapper Interface
+
+@Mapper
+public interface Mapper {
+    public Integer getTotalCount();
+    public List<{model_name}> getData(Map<String,Object> params);
+}
 ```
 
 <br />
 
 ```XML
-/* Mybatis */
+<!-- Oracle -->
 
-- MySQL 사용시 8버전 이하라면 lownum 함수를 사용 못하므로, LIMIT을 사용한다.
-${rowStart}만 사용하고 뒷자리는 고정, script단에서 rowStart변수에 -1을 한다. ex) rowStart-1
-
-<select id="selectHistory" parameterType="hashmap" resultType="hashmap">
-  SELECT * 
-  FROM {table_name}
-  ORDER BY seq
-  LIMIT ${rowStart}, 10
+<select id="getData" parameterType="hashmap" resultType="hashmap">
+    SELECT X.*
+           , TO_CHAR(X.LAST_LOGGED, 'YYYY-MM-dd') // LocalDateTime이 지원하지 않을 시 문자열로 변환
+    FROM   (
+            SELECT *
+                   , ROW_NUMBER() OVER (ORDER BY {기준_컬럼}) AS ROWNUM
+            FROM {table_name}
+           ) X
+    WHERE  X.rnum BETWEEN #{start} AND #{end}
 </select>
 
-<select id="selectHistoryCount" resultType="integer">
+<select id="getTotalCount" resultType="integer">
+  SELECT count(*)
+  FROM   {table_name}
+</select>
+```
+
+<br />
+
+```XML
+<!-- MySQL 8 이하 버전 -->
+<!-- MySQL 사용시 8버전 이하라면 lownum 함수를 사용 못하므로, LIMIT을 사용한다. -->
+
+<select id="getData" parameterType="hashmap" resultType="hashmap">
+  SELECT * 
+  FROM {table_name}
+  ORDER BY {기준_컬럼} // 정렬 기준
+  LIMIT ${start}, 10
+</select>
+
+<select id="getTotalCount" resultType="integer">
   SELECT count(*)
   FROM {table_name}
 </select>
