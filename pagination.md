@@ -202,7 +202,7 @@ public interface Mapper {
 ```XML
 <!-- Oracle -->
 
-<select id="getData" parameterType="hashmap" resultType="hashmap">
+<select id="getData" parameterType="hashmap" resultType="hashmap" or resultMap="">
     SELECT X.*
            , TO_CHAR(X.LAST_LOGGED, 'YYYY-MM-dd') // LocalDateTime이 지원하지 않을 시 문자열로 변환
     FROM   (
@@ -225,7 +225,7 @@ public interface Mapper {
 <!-- MySQL 8 이하 버전 -->
 <!-- MySQL 사용시 8버전 이하라면 lownum 함수를 사용 못하므로, LIMIT을 사용한다. -->
 
-<select id="getData" parameterType="hashmap" resultType="hashmap">
+<select id="getData" parameterType="hashmap" resultType="hashmap" or resultMap="">
   SELECT * 
   FROM {table_name}
   ORDER BY {기준_컬럼} // 정렬 기준
