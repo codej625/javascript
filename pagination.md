@@ -203,14 +203,14 @@ public interface Mapper {
 <!-- Oracle -->
 
 <select id="getData" parameterType="hashmap" resultType="hashmap" or resultMap="">
-    SELECT X.*
-           , TO_CHAR(X.LAST_LOGGED, 'YYYY-MM-dd') // LocalDateTime이 지원하지 않을 시 문자열로 변환
+    SELECT T.*
+           , TO_CHAR(T.LAST_LOGGED, 'YYYY-MM-dd HH24:MI:SS') // 예시 LocalDateTime이 지원하지 않을 시 문자열로 변환
     FROM   (
             SELECT *
                    , ROW_NUMBER() OVER (ORDER BY {기준_컬럼}) AS ROWNUM
             FROM {table_name}
-           ) X
-    WHERE  X.rnum BETWEEN #{start} AND #{end}
+           ) AS T
+    WHERE  T.rnum BETWEEN #{start} AND #{end}
 </select>
 
 <select id="getTotalCount" resultType="integer">
