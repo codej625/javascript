@@ -42,6 +42,7 @@
 3. Javascript
 
 ```javascript
+let totalCount = 0; // 총 데이터 개수
 let currentPage = 1; // 현재 페이지
 let currentGroupStart = 1; // 현재 페이지 그룹의 시작 페이지
 const rowsPerPage = 15; // 페이지당 데이터 개수
@@ -52,7 +53,8 @@ const fetchData = async (start, end) => {
   try {
     // 총 데이터 개수 가져오기
     const countResponse = await fetch('/api/total-count');
-    const totalCount = await countResponse.json();
+    // const totalCount = await countResponse.json();
+    totalCount = await countResponse.json();
     const totalPages = Math.ceil(totalCount / rowsPerPage);
 
     // 페이지 데이터 가져오기
@@ -127,7 +129,7 @@ document.getElementById('last-btn').onclick = () => {
 };
 
 // 초기화
-let totalCount = 0;
+// let totalCount = 0;
 const initialize = async () => {
   try {
     const response = await fetch('/api/total-count'); // 예시
