@@ -1,6 +1,35 @@
-# 클로저를 알아보자!
+# 클로저
 
-<br />
+<br /><br />
+
+* 클로저의 특징
+---
+
+```
+* 함수와 환경의 결합
+
+클로저는 함수와 그 함수가 정의된 환경을 함께 캡처하여 저장한다.
+따라서 함수가 호출될 때, 원래의 환경에 있던 변수들에 여전히 접근할 수 있다.
+```
+
+```
+*데이터 은닉
+
+클로저를 사용하면 외부에서 접근할 수 없는 데이터와 메서드를 캡슐화할 수 있다.
+이를 통해 데이터와 메서드를 안전하게 보호하고, 외부의 영향을 최소화할 수 있다.
+```
+
+```
+* 상태 유지
+
+클로저는 함수가 호출된 이후에도 변수의 상태를 유지할 수 있다.
+이는 클로저가 생성될 때의 환경을 기억하기 때문에 가능하며,
+이를 통해 상태를 유지하면서 함수를 계속 사용할 수 있다.
+```
+
+<br /><br /><br />
+
+1. 예시
 
 ```javascript
 const counter = (function () {
@@ -32,42 +61,9 @@ counter.decrement();
 console.log(counter.value()); /* 0 */
 ```
 
-<br />
+<br /><br />
 
-```javascript
-/* ex) */
-
-function tbody() {
-  let tbody = null;
-
-  function re() {
-    tbody = document.querySelectorAll('#tbody tr');
-  }
-  function reload() {
-    re();
-  }
-  function result() {
-    return tbody;
-  }
-  
-  return {
-    reload: reload(),
-    result: result()
-  }
-}
-
-tbody().reload;
-console.log(tbody().result);
-```
-```
-tbody라는 변수값에 null을 대입해 초기화한다.
-re()라는 내부 함수는 외부함수에 접근하여,
-tbody 변수의 동적으로 변하는 요소의 값을 가져온다.
-그리고 result라는 내부 함수를 통해 외부함수에 접근하여 tbody값을 반환한다.
-외부함수에 반환 값으로는 내부 함수를 반환되게 한다.
-```
-
-<br />
+2. 예시
 
 ```javascript
 /* ex) */
@@ -83,45 +79,63 @@ fetchData(function(data) {
   console.log('Fetched data:', data);
 });
 ```
+
+<br />
+
 ```
-fetchData 함수는 비동기적으로 데이터를 가져오는 작업을 수행한다.
-이 함수는 콜백 함수를 인자로 받아 데이터를 전달한다.
-비동기 작업이 완료되면 콜백 함수가 호출되어 데이터를 처리할 수 있다.
+1) fetchData 함수는 비동기적으로 데이터를 가져오는 작업을 수행
+   이 함수는 콜백 함수를 인자로 받아 데이터를 전달한다.
+2) 비동기 작업이 완료되면 콜백 함수가 호출되어 데이터를 처리할 수 있다.
+```
+
+```
+* 클로저의 역할
 
 여기서 클로저의 역할은 콜백 함수로 전달된 익명 함수에 있다.
 이 익명 함수는 외부 함수인 fetchData의 범위 내의 변수나 인자를 사용할 수 있다.
 따라서 data 변수에 접근하여 비동기 작업으로부터 받은 데이터를 처리할 수 있게 된다.
 ```
 
-<br />
+<br /><br />
+
+3. 예시
 
 ```javascript
-/* ex3) */
-function outerFunction(outerVariable) {
+const checkId = (() => {
+  let save = '';
 
-  return function innerFunction(innerVariable) {
-    console.log('outerVariable:', outerVariable);
-    console.log('innerVariable:', innerVariable);
+  return {
+    get: function () { return save; },
+    set: function (id) { return save = id; },
   }
-}
+})();
 
-const newFunction = outerFunction('outside');
-newFunction('inside');  /* logs: outerVariable: outside, innerVariable: inside */
+// #first 선택자 클릭 시 이벤트
+document.querySelector('#first').addEventListener('click', () => {
+  checkId.set('test');
+});
+
+// #second 선택자 클릭 시 이벤트
+document.querySelector('#second').addEventListener('click', () => {
+  console.log(checkId.get()); // test 출력
+});
 ```
+
+<br />
+
 ```
-outerFunction은 함수를 반환하는 함수이다.
-이 반환된 함수는 innerFunction이다.
-outerFunction을 호출하면서 'outside'라는 값을 인자로 전달하면,
-이 값은 outerVariable에 할당된다.
+1) checkId라는 상수를 선언하고,
+   그 값으로 즉시 실행 함수(IIFE)의 결과를 할당한다.
 
-그런 다음, outerFunction은 innerFunction을 반환한다.
-이 때 innerFunction은 outerVariable에 대한 참조를 유지하게 된다.
-이것이 클로저의 핵심 개념이다.
+2) 즉시 실행 함수는 실행 후 객체를 반환하며,
+   이 객체는 checkId에 할당된다.
+```
 
-따라서 newFunction은 이제 innerFunction을 참조하는 변수가 된다.
-그리고 innerFunction은 outerVariable에 대한 참조를 유지하고 있다.
+```
+* 클로저의 역할
 
-newFunction('inside')를 호출하면,
-이는 사실상 innerFunction('inside')를 호출하는 것과 같다.
-이 때 'inside'라는 값은 innerVariable에 할당 된다.
+즉시 실행 함수(IIFE) 내부에서는 save라는 변수를 선언하고 있다.
+이 변수는 함수 외부에서 접근할 수 없지만,
+함수 내부에서 정의된 메서드들(get과 set)은 이 변수를 계속해서 접근할 수 있다.
+이로 인해 save 변수는 함수의 스코프를 벗어나도 여전히 유지된다.
 ```
