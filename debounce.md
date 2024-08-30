@@ -17,7 +17,7 @@
 function debounce(func, delay) {
   let timer;
 
-  // 3) 클로저 함수 반환 (debounce 함수가 반환한 내부 함수가 이벤트 리스너에 등록된다.)
+  // 2) 클로저 함수 반환 (debounce 함수가 반환한 내부 함수가 이벤트 리스너에 등록된다.)
   return function () {      /**
     const args = arguments;  * 호출 된 함수의 인자를 가져온다.
                              * 반환된 함수가 호출될 때,
