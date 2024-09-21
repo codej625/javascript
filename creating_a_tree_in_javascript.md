@@ -1,6 +1,6 @@
 # 크리스마스 트리를 만들어보자!
 
-<br/>
+<br/><br/>
 
 ```javascript
 let tree = "";
