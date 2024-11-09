@@ -140,3 +140,34 @@ const userName = user !== null && user !== undefind ? user.name : 'Guest';
 const user = null;
 const userName = user?.name ?? 'Guest'; // Optional Chaining 과 Nullish Coalescing
 ```
+
+<br /><br /><br />
+
+6. || 연산자 사용
+
+```javascript
+// Original code
+
+// 레거시버전 (ES5)
+const inputValue = null;
+
+if (inputValue) {
+  console.log('truthy');
+}
+else {
+  console.log('falsy');
+}
+```
+
+<br />
+
+```javascript
+// Short
+
+const inputValue = null;
+
+// ||는 논리 연산자로, 왼쪽 값이 falsy(즉, null, undefined, false, 0, NaN, '' 등)라면 오른쪽 값을 사용한다.
+const userInput = inputValue || 'Falsy';
+
+console.log(userInput); // 'Falsy'
+```
