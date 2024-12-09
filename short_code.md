@@ -149,7 +149,7 @@ const userName = user?.name ?? 'Guest'; // Optional Chaining 과 Nullish Coalesc
 // Original code
 
 // 레거시버전 (ES5)
-const inputValue = null;
+const inputValue = null;
 
 if (inputValue) {
   console.log('truthy');
