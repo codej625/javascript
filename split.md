@@ -96,3 +96,54 @@ const limitedData = data.split('-', 3); // 하이픈(-)을 기준으로 분리�
 
 console.log(limitedData); // 출력: ["A", "B", "C"]
 ```
+
+<br />
+<br />
+<br />
+
+2. 주의 사항
+
+```js
+const convertedMitreAttackTechniques = mitreAttackTechniques.data.map((t: any) => {
+  return {
+    ...t,
+    tactics: t.tactics.split(",").map((t: string) => t.trim()), // 여기서 split 사용
+    platforms: t.platforms.split(",").map((p: string) => p.trim()), // 여기서 split 사용
+    isSubTechnique: t.isSubTechnique === "FALSE" ? false : true,
+    subTechniqueOf: t.subTechniqueOf ? t.subTechniqueOf : "",
+  };
+});
+```
+
+```
+예를 들어 위와 같은 코드가 있다고 가정하고,
+어떤 문제가 생길지 알아보자.
+
+오류가 발생할 수 있는 경우는 다음과 같습니다.
+
+1) t.tactics 또는 t.platforms가 null 또는 undefined인 경우,
+   null 또는 undefined에는 split 메서드가 존재하지 않으므로 TypeError가 발생한다.
+
+2) t.tactics 또는 t.platforms가 문자열이 아닌 다른 타입 (예: 숫자, 객체, 배열)인 경우,
+   마찬가지로 해당 타입에는 split 메서드가 없거나 예상치 못한 동작을 할 수 있다.
+```
+
+<br />
+
+```js
+const convertedMitreAttackTechniques = mitreAttackTechniques.data.map((t: MitreAttackTechniqueResponse) => {
+  return {
+    ...t,
+    tactics: t.tactics ? t.tactics.split(",").map((t: string) => t.trim()) : [],
+    platforms: t.platforms ? t.platforms.split(",").map((p: string) => p.trim()) : [],
+
+    ...
+
+  };
+});
+```
+
+```
+위와 같이 데이터 변환 전에 입력값을 검증한다면,
+데이터가 falsy값일때 에러를 방지할 수 있다.
+```
