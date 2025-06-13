@@ -68,6 +68,8 @@ rows?.map((asset: any) => {
 ```js
 // 값이 undefined인 경우 기본값을 대입하여 에러를 막을 수 있다.
 const { rows = [] } = data;
+
+// 하지만 data 자체가 없다면 여전히 에러가 날 것이다.
 ```
 
 <br />
@@ -75,7 +77,7 @@ const { rows = [] } = data;
 `2) || 연산자 사용`
 
 ```js
-// falsy값인 경우 기본 객체를 제공한다.
+// data가 falsy값인 경우 기본 객체를 제공한다.
 const { rows } = data || {};
 ```
 
