@@ -120,3 +120,39 @@ const discounted = Object.entries(prices).reduce((acc, [key, value]) => {
 
 console.log(discounted); // { apple: 90, banana: 180, orange: 135 }
 ```
+
+<br />
+
+```ts
+// 실제 사용 예시
+
+/**
+ * Response 데이터에 falsy 값을 특정 값으로 처리 (0은 제외)
+ * @param rows - 객체 배열 (ex: [{...}, {...}, {...}])
+ * @param replacement - 대체 값 (ex: "-")
+ * @returns 변환된 객체 배열
+ */
+
+export function transformedRows<T extends Record<string, any>>(
+  rows: T[],
+  replacement: string
+): T[] {
+  // 입력 유효성 검사
+  if (!Array.isArray(rows)) {
+    throw new Error("rows must be an array");
+  }
+
+  return rows.map((row, index) => {
+    // row가 객체인지 확인
+    if (row === null || typeof row !== "object") {
+      throw new Error(`Row at index ${index} must be an object`);
+    }
+
+    return Object.entries(row).reduce((acc: Record<string, any>, [key, value]) => {
+      // 0은 유지, 나머지 falsy 값은 replacement로 대체
+      acc[key] = value === 0 ? 0 : value ? value : replacement;
+      return acc;
+    }, {});
+  });
+}
+```
